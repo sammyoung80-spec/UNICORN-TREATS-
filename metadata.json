@@ -1,0 +1,8 @@
+{
+  "name": "Unicorn Treats by Jolene | Sweet Treats • Big Dreams",
+  "description": "Homemade brownies, cookies, and artisanal treats crafted with love by young dessert entrepreneur Jolene. Featuring signature fudgy brownies, chewy cookies, and handcrafted combo boxes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

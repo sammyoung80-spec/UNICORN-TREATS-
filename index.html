@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth bg-[#050505] text-[#FFF4DE]">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unicorn Treats by Jolene | Sweet Treats • Big Dreams</title>
+    <meta name="description" content="Homemade brownies, cookies, and artisanal treats crafted with love by young dessert entrepreneur Jolene. Featuring signature fudgy brownies, chewy cookies, and handcrafted combo boxes." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://unicorntreats.example.com" />
+    <meta property="og:title" content="Unicorn Treats by Jolene | Sweet Treats • Big Dreams" />
+    <meta property="og:description" content="Homemade brownies, cookies, and artisanal treats crafted with love by young dessert entrepreneur Jolene. Turning 15 on October 23rd! Support a young entrepreneur." />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Unicorn Treats by Jolene | Sweet Treats • Big Dreams" />
+    <meta name="twitter:description" content="Homemade brownies, cookies, and artisanal treats crafted with love by young dessert entrepreneur Jolene." />
+
+    <!-- Theme, PWA & Mobile Web App -->
+    <meta name="theme-color" content="#050505" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="UnicornTreat" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Google Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:ital,wght@0,700;0,800;0,900;1,800&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Bakery",
+      "name": "Unicorn Treats by Jolene",
+      "slogan": "Sweet Treats • Big Dreams",
+      "description": "Homemade brownies, cookies, and specialty sweet treats by young dessert entrepreneur Jolene.",
+      "founder": {
+        "@type": "Person",
+        "name": "Jolene"
+      },
+      "knowsAbout": ["Brownies", "Cookies", "Baking", "Handmade Desserts"],
+      "hasMenu": {
+        "@type": "Menu",
+        "name": "Unicorn Treats Signature Menu",
+        "hasMenuItem": [
+          {
+            "@type": "MenuItem",
+            "name": "Classic Chocolate Brownie",
+            "offers": { "@type": "Offer", "price": "4.00", "priceCurrency": "USD" }
+          },
+          {
+            "@type": "MenuItem",
+            "name": "Classic Chocolate Chip Cookie",
+            "offers": { "@type": "Offer", "price": "3.50", "priceCurrency": "USD" }
+          },
+          {
+            "@type": "MenuItem",
+            "name": "Special Combo (6 Brownies + 6 Cookies)",
+            "offers": { "@type": "Offer", "price": "45.00", "priceCurrency": "USD" }
+          }
+        ]
+      }
+    }
+    </script>
+  </head>
+  <body class="bg-[#050505] text-[#FFF4DE] antialiased selection:bg-[#F45AA8] selection:text-white overflow-x-hidden min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
