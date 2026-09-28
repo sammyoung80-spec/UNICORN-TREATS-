@@ -16,9 +16,12 @@ import {
 } from 'lucide-react';
 import { triggerCelebrationConfetti } from '../utils/confetti';
 import { PWAInstallButton } from './PWAInstallButton';
+import { useAdmin } from '../context/AdminContext';
+import { InlineEditable } from './admin/InlineEditable';
 
 export const OrderSection: React.FC = () => {
-  const { openDrawer, totalCount } = useOrder();
+  const { openDrawer, totalCount, cart, totalPrice } = useOrder();
+  const { config, updateBrandText, addCustomerMessage } = useAdmin();
   const [modalNotice, setModalNotice] = useState<{ title: string; content: string } | null>(null);
 
   // Quick inquiry form states
@@ -30,7 +33,7 @@ export const OrderSection: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const contact = BRAND_CONFIG.contact;
+  const contact = config.contact;
 
   const isRealPhone =
     contact.phoneNumber &&
@@ -139,6 +142,15 @@ export const OrderSection: React.FC = () => {
     }
 
     setIsSubmitting(true);
+
+    // Save message persistently in Admin Backend Inbox
+    addCustomerMessage({
+      customerName: formName.trim(),
+      customerContact: formContact.trim(),
+      notes: formNotes.trim(),
+      items: cart.length > 0 ? cart.map((i) => `${i.quantity}x ${i.name}`) : undefined,
+      totalEstimate: cart.length > 0 ? totalPrice : undefined,
+    });
 
     // Trigger joyful celebration confetti
     triggerCelebrationConfetti();

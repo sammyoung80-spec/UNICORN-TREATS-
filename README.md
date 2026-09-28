@@ -4,17 +4,69 @@ A luxury interactive dessert landing page built for young dessert entrepreneur *
 
 ---
 
-## 🎂 Key Features
+## 🔐 Admin Backend & Elementor-Style Live Editor
+
+The site includes a WordPress / Elementor-inspired visual backend accessible directly on the frontend.
+
+### Accessing the Admin Editor
+- Click the discrete **Admin Login (Lock)** icon in the navigation bar or footer.
+- **Access Code**: `It'sDIDS'`
+- Once authenticated, the **WordPress-style Admin Toolbar** appears at the top of the screen.
+
+### Admin Capabilities
+1. **Live Elementor Visual Edit Mode**:
+   - Click **"Editing Active"** in the top toolbar to reveal inline editing pencils and drag-to-resize outlines.
+   - **Click any text** (headlines, subheadings, prices, descriptions, dates) to edit directly on the page!
+2. **Media Library with Drag & Drop & Uploads**:
+   - Centralized media asset manager accessible via **"Media Library"** in the Admin Toolbar.
+   - Drag & drop image files from your computer or upload from your device with automatic canvas optimization.
+   - Assign images directly to products, combo boxes, hero banners, logos, and rosette seals.
+   - Directly drag and drop replacement photos onto product card images or hero stacks while in Edit Mode!
+3. **Editable Brand Logos & Seals**:
+   - Replace the header logo or rosette seal with custom uploaded imagery from your device or media library.
+   - One-click restore button back to the original Royal SVG lockup.
+4. **Publish Workflow**:
+   - The prominent **"Publish Changes"** button tracks pending drafts, stamps a formal publication timestamp, and triggers milestone confetti upon publishing.
+5. **Mouse Edge Drag-to-Resize on Images, Logos & Seals**:
+   - The **Hero Culinary Stack**, **Header Logo**, **Product Cards**, and **Rosette Seal** feature interactive edge & corner drag handles!
+   - Hover and drag the **right or left edge** to resize width.
+   - Drag the **bottom edge** to resize height.
+   - Drag the **corner handle** to scale smoothly in real time.
+6. **Add & Manage Custom Sections (WordPress Block Style)**:
+   - Click **"Add Section"** in the toolbar to choose from pre-built section blueprints (CTA Banners, FAQ Accordions, Features, Reviews).
+   - Reorder sections up or down, toggle section visibility, or delete sections.
+7. **Products & Combo Deals Manager**:
+   - Add new brownie or cookie flavors with custom prices, subtitles, descriptions, and seasonal tags.
+   - Add custom combo deals with shareable URLs and custom photography.
+8. **Customer Messages & Inquiries Inbox**:
+   - All orders and questions submitted via the "Place Your Order" inquiry form are automatically recorded in the Admin Messages Inbox.
+   - Filter by status (`New`, `In Progress`, `Fulfilled`), view customer phone/email, copy summary text, or contact directly.
+
+---
+
+## 🚀 Viral Social Sharing & Branding
+
+1. **Product 'Share' Buttons**:
+   - Every brownie, cookie, and combo package card features a 1-click **Share** button.
+   - Generates direct sharing links to **WhatsApp**, **X (Twitter)**, **Facebook**, **Pinterest**, **Telegram**, and native device share sheets.
+   - Shared URLs automatically scroll to and highlight the shared treat card with a golden glow!
+
+2. **DIDS' SYSTEM INC. Attribution**:
+   - Designed & Built by [DIDS' SYSTEM INC.](https://wa.me/2347016435125) with direct WhatsApp integration.
+
+---
+
+## 🎂 Key Customer-Facing Features
 
 1. **Cinematic Hero**:
    - High-impact luxury dessert photography with subtle floating chocolate crumbs, gold dust, and pink hearts.
    - Scroll-driven chocolate disassembly & reassembly animation.
    - Milestone celebration: *Turning 15 on October 23rd • Support a young entrepreneur!*
 
-2. **3D Interactive Product Cards (Critical Feature)**:
+2. **3D Interactive Product Cards**:
    - **Signature Brownies** (Classic Chocolate $4, Chocolate Pecan $4.50, Chocolate Chunk $4.50, Cookies & Cream $4.50, Seasonal Special $5).
    - **Signature Cookies** (Classic Chocolate Chip $3.50, Brown Butter Pecan $4, Peanut Butter Chocolate $4, Strawberry White Chocolate $4, Chocolate Orange $4, Seasonal Special $4.50).
-   - Smooth 3D flip card effect on desktop hover (or mobile tap) revealing a collectible price tag and "Order This Flavor" button.
+   - Smooth 3D flip card effect on desktop hover (or mobile tap) revealing collectible price tags and "Order This Flavor" buttons.
    - Fully keyboard accessible (`Enter` / `Space` / Tab navigation) with reduced-motion support.
 
 3. **Special Flavors Deck**:
@@ -23,83 +75,18 @@ A luxury interactive dessert landing page built for young dessert entrepreneur *
 4. **Special Combo Deals**:
    - Complete tier list from the flyer (*4 Brownies $15, 4 Cookies $14, 6 Brownies $22, 6 Cookies $20, 12-Piece Box $40, and the featured **Special Combo: 6 Brownies + 6 Cookies for $45**)*.
 
-5. **Multi-Channel Order Hub**:
+5. **Multi-Channel Order Hub & Treat Bag**:
    - Interactive Treat Bag drawer calculating subtotal in real-time.
    - Pre-formatted messages for WhatsApp, Phone Call, SMS, and Instagram DM.
    - Inquiry form equipped with anti-spam honeypot security.
 
 6. **Progressive Web App (PWA) & Home Screen Installation**:
    - `manifest.json` configured with brand icons, standalone display mode, and status bar theming.
-   - Service worker auto-registration via `vite-plugin-pwa` with Google Fonts runtime caching and offline readiness.
-   - In-app install button in the navigation header and order section with iOS Safari guidance modal.
+   - Service worker with offline readiness and caching.
+   - In-app install button with iOS Safari guidance modal.
 
 7. **Milestone Celebration Confetti**:
    - Palette-matched gold, hot pink, and cream celebratory confetti burst triggers when interacting with "Place Your Order" CTA buttons, celebrating Jolene's *Turning 15 on October 23rd* milestone.
-   - Fully respects `prefers-reduced-motion: reduce`.
-
-8. **Flyer Visual DNA**:
-   - Hand-painted hot pink brush strokes and gold banners.
-   - Official scalloped rosette seal (*"Unicorn Treats by Jolene — Sweet Treats • Big Dreams"*).
-   - Brand lockup with custom SVG Unicorn and Royal Crown logo.
-
----
-
-## 👩‍🍳 Business Owner Guide: How to Edit Details
-
-All business details, prices, contact channels, and flavors live in **one single configuration file**:
-
-📁 `src/data/config.ts`
-
-**You do NOT need to touch any HTML or React components.**
-
-### 1. Changing Prices & Flavor Names
-Open `src/data/config.ts` and locate the `brownies` or `cookies` array:
-
-```typescript
-// To change the price of Classic Chocolate Brownie from $4 to $4.25:
-{
-  id: "b-classic",
-  name: "Classic Chocolate",
-  price: 4.25,                 // Change this number
-  formattedPrice: "$4.25",     // Change this displayed label
-  category: "Signature Brownie",
-  subtitle: "Fudgy Dark Cocoa",
-  description: "Dense, intensely fudgy dark chocolate brownie..."
-}
-```
-
-### 2. Changing Phone, WhatsApp, and Social Handles
-In `src/data/config.ts`, find the `contact` block:
-
-```typescript
-contact: {
-  phoneNumber: "+1 (555) 123-4567",         // Replace [PHONE NUMBER]
-  whatsappNumber: "+15551234567",           // Replace [WHATSAPP NUMBER]
-  instagramHandle: "@unicorntreatsbyjolene", // Replace [INSTAGRAM HANDLE]
-  instagramUrl: "https://instagram.com/yourhandle",
-  facebookPage: "Unicorn Treats by Jolene",  // Replace [FACEBOOK PAGE]
-  facebookUrl: "https://facebook.com/yourpage",
-  email: "hello@unicorntreats.com",
-}
-```
-*Note: If any placeholder like `[PHONE NUMBER]` is left as is, the website will display a helpful popup rather than creating a broken link.*
-
-### 3. Changing the Birthday Date or Milestone
-In `src/data/config.ts`:
-
-```typescript
-birthday: {
-  milestone: "TURNING 15",
-  dateString: "October 23rd",
-  badgeText: "Turning 15 on October 23rd",
-  callout: "Support a young entrepreneur!",
-}
-```
-
-### 4. Updating Photos
-Photos are mapped in:
-📁 `src/assets/assetMap.ts`
-Simply drop your new photo file into `src/assets/images/` and update the import in `assetMap.ts`.
 
 ---
 

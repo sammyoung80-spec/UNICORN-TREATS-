@@ -1,5 +1,4 @@
 import React from 'react';
-import { BRAND_CONFIG } from '../data/config';
 import { UnicornSeal } from './UnicornSeal';
 import { BrushStroke } from './BrushStroke';
 import { ASSETS } from '../assets/assetMap';
@@ -7,9 +6,13 @@ import { Sparkles, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { triggerCelebrationConfetti } from '../utils/confetti';
+import { useAdmin } from '../context/AdminContext';
+import { ResizableWrapper } from './admin/ResizableWrapper';
+import { InlineEditable } from './admin/InlineEditable';
 
 export const BrandFinale: React.FC = () => {
   const reducedMotion = useReducedMotion();
+  const { config, updateBrandText, dimensions, updateDimension } = useAdmin();
 
   return (
     <section className="relative py-28 sm:py-36 bg-[#050505] overflow-hidden border-t border-[#F4C95D]/20 text-center">
@@ -27,7 +30,13 @@ export const BrandFinale: React.FC = () => {
           className="mb-8"
         >
           <BrushStroke variant="gold" size="lg">
-            <span>Thank you for supporting my dream! ♡ ♛</span>
+            <span>
+              <InlineEditable
+                value={config.closing.headline}
+                onSave={(v) => updateBrandText('closing.headline', v)}
+              />{' '}
+              ♡ ♛
+            </span>
           </BrushStroke>
         </motion.div>
 
@@ -40,25 +49,41 @@ export const BrandFinale: React.FC = () => {
           className="my-4"
         >
           <h2 className="font-script text-5xl sm:text-7xl lg:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-[#FFF4DE] via-[#FF9ACB] to-[#F45AA8] drop-shadow-[0_4px_25px_rgba(244,90,168,0.4)] leading-tight">
-            Good Things Are Homemade
+            <InlineEditable
+              value={config.closing.subheadline}
+              onSave={(v) => updateBrandText('closing.subheadline', v)}
+            />
           </h2>
         </motion.div>
 
-        {/* Centerpiece Image & Rosette Seal */}
+        {/* Centerpiece Image & Rosette Seal with Drag Resizing */}
         <div className="relative my-8 flex items-center justify-center">
           {/* Subtle thumbnail aura */}
           <div className="w-52 h-52 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-[#F4C95D]/40 shadow-[0_0_50px_rgba(244,201,93,0.3)] bg-[#1a0a06]">
             <img
               src={ASSETS.hero}
               alt="Unicorn Treats artisan brownies and cookies"
-              className="w-full h-full object-cover scale-110"
+              className="w-full h-full object-cover scale-110 pointer-events-none"
               loading="lazy"
             />
           </div>
 
-          {/* Overlapping Official Scalloped Rosette Seal from the Flyer */}
-          <div className="absolute -bottom-10 -right-6 sm:-right-12">
-            <UnicornSeal size={180} />
+          {/* Overlapping Official Scalloped Rosette Seal with Drag Resizing */}
+          <div className="absolute -bottom-10 -right-6 sm:-right-12 z-20">
+            <ResizableWrapper
+              id="rosette-seal"
+              label="Rosette Seal Size"
+              initialWidth={dimensions.sealSize}
+              initialHeight={dimensions.sealSize}
+              minWidth={110}
+              maxWidth={260}
+              minHeight={110}
+              maxHeight={260}
+              aspectRatioLock
+              onResize={(w) => updateDimension('sealSize', Math.round(w))}
+            >
+              <UnicornSeal size={dimensions.sealSize} />
+            </ResizableWrapper>
           </div>
         </div>
 
@@ -68,7 +93,10 @@ export const BrandFinale: React.FC = () => {
             Unicorn Treats <span className="font-script text-3xl text-[#F45AA8] font-normal lowercase">by</span> Jolene
           </p>
           <p className="font-price text-xs sm:text-sm tracking-[0.3em] font-extrabold uppercase text-[#F4C95D] mt-2">
-            Sweet Treats • Big Dreams
+            <InlineEditable
+              value={config.tagline}
+              onSave={(v) => updateBrandText('tagline', v)}
+            />
           </p>
         </div>
 

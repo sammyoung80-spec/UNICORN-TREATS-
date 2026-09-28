@@ -1,14 +1,16 @@
 import React from 'react';
-import { BRAND_CONFIG } from '../data/config';
 import { ProductCard } from './ProductCard';
 import { BrushStroke } from './BrushStroke';
 import { ASSETS } from '../assets/assetMap';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { useAdmin } from '../context/AdminContext';
+import { InlineEditable } from './admin/InlineEditable';
 
 export const BrownieSection: React.FC = () => {
   const reducedMotion = useReducedMotion();
+  const { config, updateBrandText, isEditMode, isAdminLoggedIn, setDrawerTab, dimensions } = useAdmin();
 
   return (
     <section
@@ -33,12 +35,20 @@ export const BrownieSection: React.FC = () => {
 
           <div className="mb-4">
             <BrushStroke variant="pink" size="lg">
-              <span>{BRAND_CONFIG.brownies.title}</span>
+              <span>
+                <InlineEditable
+                  value={config.brownies.title}
+                  onSave={(v) => updateBrandText('brownies.title', v)}
+                />
+              </span>
             </BrushStroke>
           </div>
 
           <p className="font-script text-xl sm:text-2xl text-[#F4C95D] mt-2">
-            {BRAND_CONFIG.brownies.description}
+            <InlineEditable
+              value={config.brownies.description}
+              onSave={(v) => updateBrandText('brownies.description', v)}
+            />
           </p>
 
           <p className="text-xs sm:text-sm text-[#FFF4DE]/60 mt-3 font-sans">
@@ -87,13 +97,13 @@ export const BrownieSection: React.FC = () => {
 
         {/* 3D Interactive Brownie Flavor Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {BRAND_CONFIG.brownies.flavors.map((flavor, index) => (
+          {config.brownies.flavors.map((flavor, index) => (
             <motion.div
               key={flavor.id}
               initial={reducedMotion ? {} : { opacity: 0, y: 30 }}
               whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
             >
               <ProductCard
                 product={flavor}
@@ -102,6 +112,21 @@ export const BrownieSection: React.FC = () => {
               />
             </motion.div>
           ))}
+
+          {/* Admin "+ Add New Brownie" Button in Edit Mode */}
+          {isEditMode && isAdminLoggedIn && (
+            <div
+              style={{ height: `${dimensions.cardHeight}px` }}
+              onClick={() => setDrawerTab('products')}
+              className="rounded-2xl border-2 border-dashed border-[#F45AA8]/60 hover:border-[#F45AA8] bg-[#1a0a06]/60 hover:bg-[#24130D] cursor-pointer flex flex-col items-center justify-center p-6 text-center transition-all group"
+            >
+              <div className="w-12 h-12 rounded-full bg-[#F45AA8]/20 text-[#F45AA8] group-hover:scale-110 flex items-center justify-center mb-3 transition-transform">
+                <Plus className="w-6 h-6" />
+              </div>
+              <p className="font-serif text-lg font-bold text-[#FFF4DE]">Add New Brownie</p>
+              <p className="text-xs text-[#FF9ACB] mt-1 font-sans">Click to open Product Manager</p>
+            </div>
+          )}
         </div>
 
       </div>

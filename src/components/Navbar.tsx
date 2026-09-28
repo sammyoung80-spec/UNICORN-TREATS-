@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { UnicornLogo } from './UnicornLogo';
 import { useOrder } from '../context/OrderContext';
-import { ShoppingBag, Menu, X, Sparkles } from 'lucide-react';
-import { BRAND_CONFIG } from '../data/config';
+import { useAdmin } from '../context/AdminContext';
+import { ShoppingBag, Menu, X, Sparkles, Lock, Sliders } from 'lucide-react';
 import { PWAInstallButton } from './PWAInstallButton';
 import { triggerCelebrationConfetti } from '../utils/confetti';
+import { ResizableWrapper } from './admin/ResizableWrapper';
+import { InlineEditable } from './admin/InlineEditable';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  onOpenLoginModal?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onOpenLoginModal }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { totalCount, openDrawer } = useOrder();
+  const {
+    isAdminLoggedIn,
+    dimensions,
+    updateDimension,
+    config,
+    updateBrandText,
+    setDrawerTab,
+  } = useAdmin();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,29 +52,63 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
+      style={{
+        paddingTop: `${dimensions.headerPaddingY}px`,
+        paddingBottom: `${dimensions.headerPaddingY}px`,
+      }}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        isAdminLoggedIn ? 'mt-9 sm:mt-10' : ''
+      } ${
         scrolled
-          ? 'bg-[#050505]/85 backdrop-blur-md border-b border-[#F4C95D]/20 shadow-[0_4px_30px_rgba(0,0,0,0.8)] py-3'
-          : 'bg-transparent py-5'
+          ? 'bg-[#050505]/90 backdrop-blur-md border-b border-[#F4C95D]/20 shadow-[0_4px_30px_rgba(0,0,0,0.8)]'
+          : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Brand Logo & Lockup */}
-        <a
-          href="#hero"
-          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F45AA8] rounded-lg"
-          aria-label="Unicorn Treats Home"
-        >
-          <UnicornLogo size={42} className="group-hover:scale-105 transition-transform" />
-          <div className="flex flex-col">
+        {/* Brand Logo & Lockup with Drag Resizing */}
+        <div className="flex items-center gap-3">
+          <ResizableWrapper
+            id="logo"
+            label="Logo Size"
+            initialWidth={dimensions.logoSize}
+            initialHeight={dimensions.logoSize}
+            minWidth={28}
+            maxWidth={90}
+            minHeight={28}
+            maxHeight={90}
+            aspectRatioLock
+            onResize={(w) => updateDimension('logoSize', Math.round(w))}
+          >
+            <a
+              href="#hero"
+              className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F45AA8] rounded-lg"
+              aria-label="Unicorn Treats Home"
+            >
+              <UnicornLogo size={dimensions.logoSize} className="hover:scale-105 transition-transform" />
+            </a>
+          </ResizableWrapper>
+
+          <a href="#hero" className="flex flex-col">
             <span className="font-serif text-lg sm:text-xl font-black tracking-wider uppercase text-[#FFF4DE] leading-tight">
-              Unicorn <span className="text-[#F45AA8]">Treats</span>
+              <InlineEditable
+                value={config.brandName.split(' ')[0] || 'Unicorn'}
+                onSave={(v) => updateBrandText('brandName', `${v} Treats`)}
+              />{' '}
+              <span className="text-[#F45AA8]">
+                <InlineEditable
+                  value={config.brandName.split(' ')[1] || 'Treats'}
+                  onSave={(v) => updateBrandText('brandName', `Unicorn ${v}`)}
+                />
+              </span>
             </span>
             <span className="font-script text-xs sm:text-sm text-[#F4C95D] -mt-0.5 tracking-wide">
-              by Jolene
+              <InlineEditable
+                value={config.subBrand}
+                onSave={(v) => updateBrandText('subBrand', v)}
+              />
             </span>
-          </div>
-        </a>
+          </a>
+        </div>
 
         {/* Desktop Nav Links */}
         <nav className="hidden lg:flex items-center gap-7">
@@ -75,8 +123,31 @@ export const Navbar: React.FC = () => {
           ))}
         </nav>
 
-        {/* Right Action: PWA Install, Cart Drawer & Order CTA */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Right Action: PWA Install, Cart Drawer, Order CTA, and Admin Lock */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Admin Lock / Edit indicator */}
+          {!isAdminLoggedIn ? (
+            <button
+              type="button"
+              onClick={onOpenLoginModal}
+              className="p-2 rounded-xl text-[#FFF4DE]/40 hover:text-[#F4C95D] hover:bg-black/30 transition-colors"
+              title="Admin Backend Login (Code: It'sDIDS')"
+              aria-label="Admin Backend Login"
+            >
+              <Lock className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setDrawerTab('styling')}
+              className="hidden sm:inline-flex p-2 rounded-xl text-[#F45AA8] hover:bg-black/40 transition-colors"
+              title="Quick Layout Settings"
+              aria-label="Admin layout settings"
+            >
+              <Sliders className="w-4 h-4" />
+            </button>
+          )}
+
           {/* PWA In-App Install Button */}
           <PWAInstallButton variant="nav" className="hidden sm:inline-flex" />
 
@@ -134,6 +205,31 @@ export const Navbar: React.FC = () => {
             ))}
 
             <div className="pt-2 flex flex-col gap-2.5">
+              {!isAdminLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (onOpenLoginModal) onOpenLoginModal();
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl bg-[#24130D] text-[#F4C95D] text-xs font-bold uppercase tracking-wider border border-[#F4C95D]/30 flex items-center justify-center gap-2"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Admin Login</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setDrawerTab('sections');
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl bg-[#F45AA8] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  <span>Open Admin Panels</span>
+                </button>
+              )}
+
               <PWAInstallButton variant="cta" className="w-full justify-center" />
 
               <a

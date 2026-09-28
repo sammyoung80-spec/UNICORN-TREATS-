@@ -20,6 +20,7 @@ export interface ProductItem {
   description: string;
   tags?: string[];
   isSpecial?: boolean;
+  image?: string;
 }
 
 export interface ComboDeal {
@@ -31,6 +32,7 @@ export interface ComboDeal {
   isSpecialCombo?: boolean;
   badge?: string;
   description: string;
+  image?: string;
 }
 
 export interface SpecialFlavor {
@@ -94,6 +96,15 @@ export interface BrandConfig {
     subheadline: string;
     closingNote: string;
     signature: string;
+  };
+
+  // Editable Branding & Logos
+  branding?: {
+    customLogoUrl?: string;
+    customSealUrl?: string;
+    customHeroImageUrl?: string;
+    logoTextMain?: string;
+    logoTextSub?: string;
   };
 }
 

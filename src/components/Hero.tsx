@@ -1,14 +1,27 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { BRAND_CONFIG } from '../data/config';
 import { ASSETS } from '../assets/assetMap';
-import { Sparkles, Heart, ArrowDown, ChevronRight } from 'lucide-react';
+import { Sparkles, Heart, ArrowDown, ChevronRight, Camera } from 'lucide-react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { triggerCelebrationConfetti } from '../utils/confetti';
+import { useAdmin } from '../context/AdminContext';
+import { ResizableWrapper } from './admin/ResizableWrapper';
+import { InlineEditable } from './admin/InlineEditable';
 
 export const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const {
+    config,
+    updateBrandText,
+    dimensions,
+    updateDimension,
+    isEditMode,
+    isAdminLoggedIn,
+    openMediaPicker,
+    uploadFileToMedia,
+    updateCustomHeroImage,
+  } = useAdmin();
 
   // Scroll animations
   const { scrollYProgress } = useScroll({
@@ -53,15 +66,24 @@ export const Hero: React.FC = () => {
             >
               <div className="w-2 h-2 rounded-full bg-[#F45AA8] animate-ping" />
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#F4C95D]">
-                {BRAND_CONFIG.birthday.milestone}
+                <InlineEditable
+                  value={config.birthday.milestone}
+                  onSave={(v) => updateBrandText('birthday.milestone', v)}
+                />
               </span>
               <span className="text-[11px] sm:text-xs text-[#FFF4DE]/60">·</span>
               <span className="text-[11px] sm:text-xs text-[#FF9ACB] font-medium">
-                {BRAND_CONFIG.birthday.dateString}
+                <InlineEditable
+                  value={config.birthday.dateString}
+                  onSave={(v) => updateBrandText('birthday.dateString', v)}
+                />
               </span>
               <span className="text-[11px] sm:text-xs text-[#FFF4DE]/60 hidden sm:inline">·</span>
               <span className="text-[11px] sm:text-xs text-[#FFF4DE]/80 hidden sm:inline">
-                {BRAND_CONFIG.birthday.callout}
+                <InlineEditable
+                  value={config.birthday.callout}
+                  onSave={(v) => updateBrandText('birthday.callout', v)}
+                />
               </span>
             </motion.div>
 
@@ -72,9 +94,16 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="font-serif text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] text-[#FFF4DE]"
             >
-              UNICORN <br />
+              <InlineEditable
+                value="UNICORN"
+                onSave={(v) => updateBrandText('brandName', `${v} ${config.brandName.split(' ')[1] || 'Treats'}`)}
+              />{' '}
+              <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9ACB] via-[#F45AA8] to-[#F4C95D] drop-shadow-[0_4px_25px_rgba(244,90,168,0.4)]">
-                TREATS
+                <InlineEditable
+                  value="TREATS"
+                  onSave={(v) => updateBrandText('brandName', `${config.brandName.split(' ')[0] || 'Unicorn'} ${v}`)}
+                />
               </span>
             </motion.h1>
 
@@ -91,12 +120,16 @@ export const Hero: React.FC = () => {
                 <span>Big Dreams!</span>
               </p>
               <p className="mt-3 text-sm sm:text-base text-[#FFF4DE]/80 max-w-lg leading-relaxed">
-                {BRAND_CONFIG.mission}
+                <InlineEditable
+                  value={config.mission}
+                  onSave={(v) => updateBrandText('mission', v)}
+                  multiline
+                />
               </p>
 
               {/* Flyer Quality Pillars */}
               <div className="mt-4 flex flex-wrap items-center justify-center lg:justify-start gap-2 text-[11px] sm:text-xs uppercase tracking-wider font-semibold text-[#FFF4DE]/70">
-                {BRAND_CONFIG.qualityPillars.map((pillar, idx) => (
+                {config.qualityPillars.map((pillar, idx) => (
                   <React.Fragment key={pillar}>
                     {idx > 0 && <span className="text-[#F45AA8]">✦</span>}
                     <span>{pillar}</span>
@@ -137,24 +170,56 @@ export const Hero: React.FC = () => {
 
           </div>
 
-          {/* RIGHT COLUMN: CINEMATIC DESSERT STACK & SCROLL INTERACTION */}
+          {/* RIGHT COLUMN: CINEMATIC DESSERT STACK WITH DRAG-RESIZING */}
           <div className="lg:col-span-6 relative flex items-center justify-center">
             <motion.div
               style={reducedMotion ? {} : { scale, opacity: heroOpacity }}
-              className="relative w-full max-w-lg aspect-square flex items-center justify-center"
+              className="relative flex items-center justify-center"
             >
-              {/* Gold & Pink Ambient Radial Rings */}
-              <div className="absolute inset-0 rounded-full border border-[#F4C95D]/15 scale-95 pointer-events-none" />
-              <div className="absolute inset-4 rounded-full border border-[#F45AA8]/20 scale-90 pointer-events-none" />
+              {/* Resizable Wrapper: Drag edge handles with mouse to scale */}
+              <ResizableWrapper
+                id="hero-dessert-stack"
+                label="Hero Culinary Image (Drag edge to resize)"
+                initialWidth={dimensions.heroImageWidth}
+                initialHeight={dimensions.heroImageHeight}
+                minWidth={280}
+                maxWidth={700}
+                minHeight={280}
+                maxHeight={700}
+                onResize={(w, h) => {
+                  updateDimension('heroImageWidth', Math.round(w));
+                  updateDimension('heroImageHeight', Math.round(h));
+                }}
+                className="relative rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)] border border-[#F4C95D]/30 group"
+              >
+                {/* Gold & Pink Ambient Radial Rings */}
+                <div className="absolute inset-0 rounded-full border border-[#F4C95D]/15 scale-95 pointer-events-none" />
+                <div className="absolute inset-4 rounded-full border border-[#F45AA8]/20 scale-90 pointer-events-none" />
 
-              {/* Main Culinary Centerpiece */}
-              <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)] border border-[#F4C95D]/30 group">
                 <img
-                  src={ASSETS.hero}
+                  src={config.branding?.customHeroImageUrl || ASSETS.hero}
                   alt="Unicorn Treats gourmet brownies and cookies stack"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
                   loading="eager"
                 />
+
+                {/* Live Edit Mode: Change Photo overlay button */}
+                {isEditMode && isAdminLoggedIn && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openMediaPicker({ type: 'hero' });
+                    }}
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 text-white z-20 cursor-pointer"
+                    title="Change hero banner image from Media Library"
+                  >
+                    <Camera className="w-8 h-8 text-[#F4C95D]" />
+                    <span className="text-xs font-bold uppercase tracking-wider bg-[#F45AA8] px-3 py-1 rounded-full shadow-lg">
+                      Change Hero Photo
+                    </span>
+                  </button>
+                )}
 
                 {/* Film grain / dark gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/20 pointer-events-none" />
@@ -162,7 +227,6 @@ export const Hero: React.FC = () => {
                 {/* Floating Brownie Pieces for the Scroll Disassembly effect */}
                 {!reducedMotion && (
                   <>
-                    {/* Top Left Brownie Chunk */}
                     <motion.div
                       style={{
                         x: disperseXLeft,
@@ -174,7 +238,6 @@ export const Hero: React.FC = () => {
                       <span className="text-[#F4C95D]">✦</span> Fudgy Dark Cocoa
                     </motion.div>
 
-                    {/* Bottom Right Cookie Chunk */}
                     <motion.div
                       style={{
                         x: disperseXRight,
@@ -185,7 +248,6 @@ export const Hero: React.FC = () => {
                       <span className="text-[#F45AA8]">♡</span> Fresh Golden Baked
                     </motion.div>
 
-                    {/* Dissolving Crumbs & Sparkles */}
                     <motion.div
                       style={{ opacity: crumbsOpacity }}
                       className="absolute inset-0 pointer-events-none flex items-center justify-center"
@@ -198,14 +260,14 @@ export const Hero: React.FC = () => {
                 )}
 
                 {/* Floating Highlight Tag */}
-                <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md border border-[#FFF4DE]/10 text-[11px] text-[#FFF4DE]">
+                <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md border border-[#FFF4DE]/10 text-[11px] text-[#FFF4DE] pointer-events-none">
                   <span className="w-2 h-2 rounded-full bg-[#F4C95D]" />
                   <span>Small-Batch Artisanal Baking</span>
                 </div>
-              </div>
+              </ResizableWrapper>
 
               {/* Floating Unicorn Heart Accent */}
-              <div className="absolute -bottom-4 -right-4 p-3 rounded-2xl bg-gradient-to-br from-[#24130D] to-[#050505] border border-[#F45AA8]/50 shadow-2xl flex items-center gap-2 text-xs font-script text-[#FF9ACB] z-30">
+              <div className="absolute -bottom-4 -right-4 p-3 rounded-2xl bg-gradient-to-br from-[#24130D] to-[#050505] border border-[#F45AA8]/50 shadow-2xl flex items-center gap-2 text-xs font-script text-[#FF9ACB] z-30 pointer-events-none">
                 <Heart className="w-4 h-4 fill-[#F45AA8] text-[#F45AA8]" />
                 <span>Made with lots of love</span>
               </div>

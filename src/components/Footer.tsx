@@ -1,9 +1,16 @@
 import React from 'react';
 import { UnicornLogo } from './UnicornLogo';
-import { BRAND_CONFIG } from '../data/config';
-import { Instagram, Facebook, MessageCircle, Heart, ArrowUp } from 'lucide-react';
+import { Instagram, Facebook, MessageCircle, Heart, ArrowUp, Lock, Edit2 } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
+import { InlineEditable } from './admin/InlineEditable';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenLoginModal?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenLoginModal }) => {
+  const { config, updateBrandText, dimensions, isAdminLoggedIn, toggleEditMode } = useAdmin();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -19,7 +26,13 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-[#030101] border-t border-[#FFF4DE]/10 py-16 text-[#FFF4DE]/70">
+    <footer
+      style={{
+        paddingTop: `${dimensions.footerPaddingY}px`,
+        paddingBottom: `${dimensions.footerPaddingY}px`,
+      }}
+      className="relative bg-[#030101] border-t border-[#FFF4DE]/10 text-[#FFF4DE]/70 transition-all"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-12 border-b border-[#FFF4DE]/10">
           
@@ -37,7 +50,10 @@ export const Footer: React.FC = () => {
               </div>
             </div>
             <p className="font-price text-xs uppercase tracking-widest font-bold text-[#FF9ACB] mt-2">
-              {BRAND_CONFIG.tagline}
+              <InlineEditable
+                value={config.tagline}
+                onSave={(v) => updateBrandText('tagline', v)}
+              />
             </p>
             <p className="text-xs text-[#FFF4DE]/50 mt-1 max-w-sm">
               Homemade treats made with fresh ingredients, real chocolate, and endless love.
@@ -91,9 +107,45 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom copyright row */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#FFF4DE]/50 gap-4 text-center sm:text-left">
-          <p>© 2026 Unicorn Treats by Jolene. All rights reserved.</p>
+        {/* Bottom copyright row & Admin Login Link */}
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-[#FFF4DE]/50 gap-4 text-center md:text-left">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3">
+            <p>© 2026 Unicorn Treats by Jolene. All rights reserved.</p>
+            <span className="text-[#FFF4DE]/20 hidden sm:inline">·</span>
+            <p className="text-[11px] text-[#FFF4DE]/60">
+              Designed &amp; Built by{' '}
+              <a
+                href="https://wa.me/2347016435125?text=Hello%20DIDS'%20SYSTEM%20INC.%2C%20I'm%20reaching%20out%20regarding%20Unicorn%20Treats%20website%20design%20and%20development."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#F4C95D] hover:text-[#FFF4DE] font-bold underline underline-offset-2 decoration-[#F4C95D]/40 hover:decoration-[#F4C95D] transition-colors"
+                title="Connect with DIDS' SYSTEM INC. on WhatsApp (+2347016435125)"
+              >
+                DIDS&apos; SYSTEM INC.
+              </a>
+            </p>
+            <span className="text-[#FFF4DE]/20 hidden sm:inline">·</span>
+            {!isAdminLoggedIn ? (
+              <button
+                type="button"
+                onClick={onOpenLoginModal}
+                className="hover:text-[#F4C95D] flex items-center gap-1 transition-colors text-[11px]"
+              >
+                <Lock className="w-3 h-3" />
+                <span>Admin Login</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={toggleEditMode}
+                className="text-[#F45AA8] hover:underline flex items-center gap-1 transition-colors text-[11px]"
+              >
+                <Edit2 className="w-3 h-3" />
+                <span>Toggle Live Editor</span>
+              </button>
+            )}
+          </div>
+
           <p className="flex items-center justify-center gap-1 font-script text-base text-[#FF9ACB]">
             <span>Turning 15 on October 23rd</span>
             <Heart className="w-3.5 h-3.5 fill-[#F45AA8] text-[#F45AA8]" />
